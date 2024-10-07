@@ -1,0 +1,325 @@
+/* Reset some default styles */
+body, h1, h2, p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Header styling */
+header {
+    background: linear-gradient(to right, #EA8D8D, #A890FE);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1s ease-in-out;
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: -1;
+    filter: blur(10px);
+}
+
+h1 {
+    margin-bottom: 10px;
+    font-size: 2.5em;
+    font-weight: bold;
+    animation: slideInUp 1s ease-in-out;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    border-radius: 5px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+nav ul li {
+    margin: 0;
+}
+
+nav ul li a {
+    display: block;
+    padding: 15px 25px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+nav ul li a:hover {
+    background-color: #575757;
+    transform: scale(1.05);
+}
+
+/* Container styling */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+h2 {
+    color: #007bff;
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    animation: slideInUp 1s ease-in-out;
+}
+
+p {
+    color: #333;
+    font-size: 1.1em;
+}
+
+/* Profile Card */
+.profile-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.profile-card img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    margin-right: 20px;
+    animation: pulse 2s infinite;
+}
+
+.profile-card h3 {
+    margin: 0;
+    color: #007bff;
+    font-size: 1.8em;
+}
+
+.profile-card p {
+    color: #666;
+    font-size: 1.2em;
+}
+
+/* Statistics Section */
+.statistics {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    padding: 20px;
+    margin-right: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    animation: slideInUp 1s ease-in-out;
+}
+
+.stat-card:last-child {
+    margin-right: 0;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+.stat-card h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+}
+
+.stat-card p {
+    color: #333;
+    font-size: 1.6em;
+}
+
+/* Recent Activities Section */
+.recent-activities {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.recent-activities h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+}
+
+.recent-activities ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recent-activities ul li {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    color: #333;
+}
+
+.recent-activities ul li:last-child {
+    border-bottom: none;
+}
+
+/* Notifications Section */
+.notifications {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.notifications h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+}
+
+.notifications ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notifications ul li {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    color: #333;
+}
+
+.notifications ul li:last-child {
+    border-bottom: none;
+}
+
+/* Quick Actions Section */
+.quick-actions {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.quick-actions .action-card {
+    flex: 1;
+    padding: 20px;
+    margin-right: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s;
+    animation: slideInUp 1s ease-in-out;
+}
+
+.quick-actions .action-card:last-child {
+    margin-right: 0;
+}
+
+.quick-actions .action-card:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.quick-actions .action-card a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+.quick-actions .action-card a:hover {
+    color: #0056b3;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #f1f1f1;
+    padding: 15px 0;
+    text-align: center;
+    color: #555;
+    font-size: 0.9em;
+    border-top: 1px solid #ddd;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    animation: fadeIn 2s ease-in-out;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+    }
+    nav ul li a {
+        padding: 10px 15px;
+    }
+    .statistics {
+        flex-direction: column;
+    }
+    .stat-card {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+    .recent-activities,
+    .notifications {
+        padding: 10px;
+    }
+    .quick-actions .action-card {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}

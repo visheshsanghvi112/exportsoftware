@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Calculator</title>
+    <style>
+        /* Basic reset and styling */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #calculator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            padding: 20px;
+            background: linear-gradient(145deg, #333, #444);
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            display: none; /* Initially hidden */
+            color: #fff;
+            text-align: center;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        #calculator #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 26px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        #calculator #close-btn:hover {
+            color: #e74c3c;
+        }
+
+        #display {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 32px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: #222;
+            color: #fff;
+            box-sizing: border-box;
+            overflow-x: auto; /* Ensure long expressions are scrollable */
+        }
+
+        #buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        #buttons button {
+            width: 100%;
+            height: 80px;
+            font-size: 24px;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            background: #555;
+            color: #fff;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.1s;
+            box-sizing: border-box;
+        }
+
+        #buttons button:hover {
+            background: #666;
+        }
+
+        #buttons button:active {
+            background: #777;
+            box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3);
+            transform: scale(0.98);
+        }
+
+        #buttons .operator {
+            background: #f39c12;
+        }
+
+        #buttons .operator:hover {
+            background: #e67e22;
+        }
+
+        #buttons .operator:active {
+            background: #d35400;
+        }
+
+        #buttons .equals {
+            grid-column: span 2;
+            background: #2ecc71;
+        }
+
+        #buttons .equals:hover {
+            background: #27ae60;
+        }
+
+        #buttons .equals:active {
+            background: #1e8449;
+        }
+
+        #buttons .clear {
+            grid-column: span 2;
+            background: #e74c3c;
+        }
+
+        #buttons .clear:hover {
+            background: #c0392b;
+        }
+
+        #buttons .clear:active {
+            background: #a93226;
+        }
+
+        #buttons .sqrt, #buttons .square {
+            background: #3498db;
+        }
+
+        #buttons .sqrt:hover, #buttons .square:hover {
+            background: #2980b9;
+        }
+
+        #buttons .sqrt:active, #buttons .square:active {
+            background: #1f618d;
+        }
+
+        #history {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="calculator">
+        <button id="close-btn">✖</button>
+        <input type="text" id="display" disabled>
+        <div id="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendOperation('/')">/</button>
+            <button class="operator" onclick="appendOperation('*')">*</button>
+            <button class="operator" onclick="appendOperation('-')">-</button>
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
+            <button class="operator" onclick="appendOperation('+')">+</button>
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button class="equals" onclick="calculateResult()">=</button>
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
+            <button class="equals" onclick="calculateResult()">=</button>
+            <button onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
+            <button class="sqrt" onclick="appendOperation('Math.sqrt(')">√</button>
+            <button class="square" onclick="appendOperation('Math.pow(')">x²</button>
+        </div>
+        <div id="history"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const calculator = document.getElementById('calculator');
+            const closeBtn = document.getElementById('close-btn');
+            const display = document.getElementById('display');
+            const historyDiv = document.getElementById('history');
+            let history = [];
+
+            function toggleCalculator() {
+                calculator.style.display = calculator.style.display === 'none' ? 'block' : 'none';
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'F12') {
+                    event.preventDefault(); // Prevent default F12 behavior (e.g., opening DevTools)
+                    toggleCalculator();
+                } else if (event.key >= '0' && event.key <= '9') {
+                    appendNumber(event.key);
+                } else if (['+', '-', '*', '/'].includes(event.key)) {
+                    appendOperation(event.key);
+                } else if (event.key === 'Enter') {
+                    calculateResult();
+                } else if (event.key === 'Backspace') {
+                    backspace();
+                } else if (event.key === 'Escape') {
+                    clearDisplay();
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                calculator.style.display = 'none';
+            });
+
+            window.appendNumber = function(number) {
+                display.value += number;
+            };
+
+            window.appendOperation = function(operation) {
+                if (display.value.length > 0 && !['+', '-', '*', '/'].includes(display.value.slice(-1))) {
+                    display.value += ' ' + operation + ' ';
+                }
+            };
+
+            window.calculateResult = function() {
+                try {
+                    const expression = display.value
+                        .replace(/√/g, 'Math.sqrt')
+                        .replace(/x²/g, 'Math.pow')
+                        .replace(/[^-()\d/*+.√Math.pow]/g, ''); // Sanitize input
+                    const result = eval(expression);
+                    display.value = result;
+                    addToHistory(expression + ' = ' + result);
+                } catch (e) {
+                    display.value = 'Error';
+                }
+            };
+
+            window.clearDisplay = function() {
+                display.value = '';
+            };
+
+            window.backspace = function() {
+                display.value = display.value.slice(0, -1);
+            };
+
+            function addToHistory(entry) {
+                history.push(entry);
+                if (history.length > 10) {
+                    history.shift(); // Limit history to 10 entries
+                }
+                historyDiv.innerHTML = history.map(item => `<div>${item}</div>`).join('');
+            }
+        });
+    </script>
+</body>
+</html>

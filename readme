@@ -1,0 +1,58 @@
+
+# Export Software
+
+## Overview
+
+Welcome to the Export Software developed by Vishesh Sanghvi for GenericPlus. This software is designed to streamline the process of exporting data and managing billing information efficiently.
+
+## Database
+
+The database used for this software is named `exportsoftware`. It is configured without a password for ease of access during development.
+
+## Features
+
+- **Login and Signup Functionality:** Secure access to the software.
+- **Dashboard Navigation:** Easy access to various sections of the application.
+- **Export Billing:** Manage and export billing information seamlessly.
+
+## Installation
+
+1. **Clone the Repository:**
+   ```bash
+   git clone [REPOSITORY_URL]
+   ```
+
+2. **Setup Database:**
+   - Ensure you have a MySQL server running.
+   - Import the database schema into your MySQL server using:
+     ```bash
+     mysql -u [USERNAME] -p exportsoftware < [DATABASE_DUMP_FILE].sql
+     ```
+
+3. **Configuration:**
+   - Configure your application settings in `config.php` (or the equivalent configuration file).
+
+4. **Run the Application:**
+   - Start your local server and navigate to the application directory.
+   - Access the application via `localhost/[YOUR_APPLICATION_PATH]`.
+
+## Usage
+
+- **Login:** Log in with your credentials to access the application.
+- **Export:** Use the export functionality to generate reports and export data.
+
+## Contribution
+
+For contributions, please fork the repository and submit a pull request with detailed explanations of your changes.
+
+## License
+
+This project is licensed under the [Your License Name] License. See the `LICENSE` file for details.
+
+## Contact
+
+For any queries or support, contact Vishesh Sanghvi at [your email address].
+
+## Year
+2024
+ 

@@ -1,0 +1,224 @@
+Form data:
+Array
+(
+    [name] => Vishesh Sunil Sanghvi
+    [manufacturing_date] => 
+    [expiry_date] => 
+    [batch_no] => 
+    [supplier_id] => 
+    [buyer_id] => 
+    [consignee_id] => 
+    [invoice_no] => 42342
+    [invoice_date] => 
+    [carriage] => 
+    [place_of_receipt] => 
+    [port_of_loading] => 
+    [port_of_discharge] => 
+    [final_destination] => 
+    [terms_of_delivery] => Urgent
+    [total_amount] => 10000
+    [igst_amount] => 1800
+    [container_length] => 0
+    [container_width] => 0
+    [container_height] => 0
+    [container_other] => 
+    [bank_name] => 
+    [ifsc_code] => 
+    [gstin] => 
+    [vat_tin] => 
+    [declaration] => 
+    [shipment_advice_no] => 
+)
+
+Form data:
+Array
+(
+    [name] => Vishesh Sunil Sanghvi
+    [manufacturing_date] => 
+    [expiry_date] => 
+    [batch_no] => 
+    [supplier_id] => 
+    [buyer_id] => 
+    [consignee_id] => 
+    [invoice_no] => 42342
+    [invoice_date] => 
+    [carriage] => 
+    [place_of_receipt] => 
+    [port_of_loading] => 
+    [port_of_discharge] => 
+    [final_destination] => 
+    [terms_of_delivery] => Urgent
+    [total_amount] => 10000
+    [igst_amount] => 1800
+    [container_length] => 0
+    [container_width] => 0
+    [container_height] => 0
+    [container_other] => 
+    [bank_name] => 
+    [ifsc_code] => 
+    [gstin] => 
+    [vat_tin] => 
+    [declaration] => 
+    [shipment_advice_no] => 
+)
+
+Form data:
+Array
+(
+    [name] => Vishesh Sunil Sanghvi
+    [manufacturing_date] => 
+    [expiry_date] => 
+    [batch_no] => C24092
+    [supplier_id] => 
+    [buyer_id] => 
+    [consignee_id] => 
+    [invoice_no] => 4343
+    [invoice_date] => 
+    [carriage] => 
+    [place_of_receipt] => 
+    [port_of_loading] => 
+    [port_of_discharge] => 
+    [final_destination] => 
+    [terms_of_delivery] => Urgent
+    [total_amount] => 121213
+    [igst_amount] => 21818.34
+    [container_length] => 0
+    [container_width] => 0
+    [container_height] => 0
+    [container_other] => 
+    [bank_name] => 
+    [ifsc_code] => 
+    [gstin] => 
+    [vat_tin] => 
+    [declaration] => 
+    [shipment_advice_no] => 
+)
+
+SQL Query: INSERT INTO exportbill (
+        name, manufacturing_date, expiry_date, batch_no, 
+        supplier_id, buyer_id, consignee_id, invoice_no, invoice_date, 
+        carriage, place_of_receipt, port_of_loading, port_of_discharge, 
+        final_destination, terms_of_delivery, total_amount, igst_amount, 
+        container_length, container_width, container_height, container_other, 
+        bank_name, ifsc_code, gstin, vat_tin, declaration, shipment_advice_no
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Form data:
+Array
+(
+    [name] => Vishesh Sunil Sanghvi
+    [manufacturing_date] => 
+    [expiry_date] => 
+    [batch_no] => C24092
+    [supplier_id] => 
+    [buyer_id] => 
+    [consignee_id] => 
+    [invoice_no] => 4343
+    [invoice_date] => 
+    [carriage] => 
+    [place_of_receipt] => 
+    [port_of_loading] => 
+    [port_of_discharge] => 
+    [final_destination] => 
+    [terms_of_delivery] => Urgent
+    [total_amount] => 100
+    [igst_amount] => 18
+    [container_length] => 0
+    [container_width] => 0
+    [container_height] => 0
+    [container_other] => 
+    [bank_name] => 
+    [ifsc_code] => 
+    [gstin] => 
+    [vat_tin] => 
+    [declaration] => 
+    [shipment_advice_no] => 
+)
+
+SQL Query: INSERT INTO exportbill (
+        name, manufacturing_date, expiry_date, batch_no, 
+        supplier_id, buyer_id, consignee_id, invoice_no, invoice_date, 
+        carriage, place_of_receipt, port_of_loading, port_of_discharge, 
+        final_destination, terms_of_delivery, total_amount, igst_amount, 
+        container_length, container_width, container_height, container_other, 
+        bank_name, ifsc_code, gstin, vat_tin, declaration, shipment_advice_no
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Form data:
+Array
+(
+    [name] => Vishesh Sunil Sanghvi
+    [manufacturing_date] => 
+    [expiry_date] => 
+    [batch_no] => 
+    [supplier_id] => 
+    [buyer_id] => 
+    [consignee_id] => 
+    [invoice_no] => 458432
+    [invoice_date] => 
+    [carriage] => 
+    [place_of_receipt] => 
+    [port_of_loading] => 
+    [port_of_discharge] => 
+    [final_destination] => 
+    [terms_of_delivery] => Urgent
+    [total_amount] => 13112
+    [igst_amount] => 2360.16
+    [container_length] => 0
+    [container_width] => 0
+    [container_height] => 0
+    [container_other] => 
+    [bank_name] => 
+    [ifsc_code] => 
+    [gstin] => 
+    [vat_tin] => 
+    [declaration] => 
+    [shipment_advice_no] => 
+)
+
+SQL Query: INSERT INTO exportbill (
+        name, manufacturing_date, expiry_date, batch_no, 
+        supplier_id, buyer_id, consignee_id, invoice_no, invoice_date, 
+        carriage, place_of_receipt, port_of_loading, port_of_discharge, 
+        final_destination, terms_of_delivery, total_amount, igst_amount, 
+        container_length, container_width, container_height, container_other, 
+        bank_name, ifsc_code, gstin, vat_tin, declaration, shipment_advice_no
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Form data:
+Array
+(
+    [name] => Vishesh Sunil Sanghvi
+    [manufacturing_date] => 
+    [expiry_date] => 
+    [batch_no] => C24092
+    [supplier_id] => 
+    [buyer_id] => 
+    [consignee_id] => 
+    [invoice_no] => 45842
+    [invoice_date] => 
+    [carriage] => 
+    [place_of_receipt] => 
+    [port_of_loading] => 
+    [port_of_discharge] => 
+    [final_destination] => 
+    [terms_of_delivery] => Urgent
+    [total_amount] => 21311
+    [igst_amount] => 3835.98
+    [container_length] => 0
+    [container_width] => 0
+    [container_height] => 0
+    [container_other] => 
+    [bank_name] => 
+    [ifsc_code] => 
+    [gstin] => 
+    [vat_tin] => 
+    [declaration] => 
+    [shipment_advice_no] => 
+)
+
+SQL Query: INSERT INTO exportbill (
+        name, manufacturing_date, expiry_date, batch_no, 
+        supplier_id, buyer_id, consignee_id, invoice_no, invoice_date, 
+        carriage, place_of_receipt, port_of_loading, port_of_discharge, 
+        final_destination, terms_of_delivery, total_amount, igst_amount, 
+        container_length, container_width, container_height, container_other, 
+        bank_name, ifsc_code, gstin, vat_tin, declaration, shipment_advice_no
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

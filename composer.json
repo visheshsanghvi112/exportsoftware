@@ -1,0 +1,19 @@
+{
+    "name": "visheshsanghvi/exportsoftware",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Visheshsanghvi\\Exportsoftware\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "N"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "dompdf/dompdf": "^3.0",
+        "mpdf/mpdf": "^6.1"
+    }
+}
