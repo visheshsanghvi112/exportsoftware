@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
-import plotly.express as px
+from datetime import datetime
 
-# Initialize session state for storing student data, courses, and more
+# Initialize session state for storing student data, courses, and additional information
 if 'students' not in st.session_state:
     st.session_state.students = []
 if 'courses' not in st.session_state:
@@ -17,16 +16,6 @@ if 'projects' not in st.session_state:
     st.session_state.projects = []
 if 'extracurriculars' not in st.session_state:
     st.session_state.extracurriculars = []
-if 'notifications' not in st.session_state:
-    st.session_state.notifications = []
-
-# Header Section for the App
-st.set_page_config(page_title="Student Management System", layout="wide", page_icon="🎓")
-st.title("🎓 Student Management System")
-st.markdown("""
-Welcome to the **Student Management System**. 
-This platform helps in managing students' data, tracking their attendance, grades, projects, and extracurricular activities.
-""")
 
 # Function to add a student
 def add_student(name, age, email, grade, address, phone, enrollment_date, gender):
@@ -59,12 +48,12 @@ def add_course(course_name, credits, instructor):
     st.success(f"Course {course_name} added successfully!")
 
 # Function to record attendance
-def record_attendance(student_index, course_name, status):
+def record_attendance(student_index, course_name):
     today = datetime.today().date()
     if today not in st.session_state.attendance:
         st.session_state.attendance[today] = {}
-    st.session_state.attendance[today][course_name] = {student_index: status}
-    st.success(f"Attendance for {st.session_state.students[student_index]['Name']} marked as {status} in {course_name}.")
+    st.session_state.attendance[today][course_name] = student_index
+    st.success(f"Attendance recorded for {st.session_state.students[student_index]['Name']} in {course_name}.")
 
 # Function to add grades
 def add_grade(student_index, course_name, grade):
@@ -83,30 +72,7 @@ def add_project(student_index, project_name, deadline):
     st.session_state.projects.append(project_data)
     st.success(f"Project {project_name} added for {st.session_state.students[student_index]['Name']}!")
 
-# Function to add extracurricular activity
-def add_extracurricular(student_index, activity_name, role, date):
-    activity_data = {
-        "Student": st.session_state.students[student_index]["Name"],
-        "Activity": activity_name,
-        "Role": role,
-        "Date": date
-    }
-    st.session_state.extracurriculars.append(activity_data)
-    st.success(f"Activity {activity_name} added for {st.session_state.students[student_index]['Name']}!")
-
-# Function to display notifications
-def check_notifications():
-    today = datetime.today().date()
-    for project in st.session_state.projects:
-        deadline = project["Deadline"]
-        if (deadline - today).days <= 2:
-            notification = f"⚠️ {project['Student']} has a project '{project['Project Name']}' due in {deadline - today} days."
-            if notification not in st.session_state.notifications:
-                st.session_state.notifications.append(notification)
-    for notif in st.session_state.notifications:
-        st.error(notif)
-
-# Save Data to CSV
+# Function to save data to CSV
 def save_data():
     df_students = pd.DataFrame(st.session_state.students)
     df_students.to_csv('students.csv', index=False)
@@ -114,32 +80,15 @@ def save_data():
     df_courses.to_csv('courses.csv', index=False)
     df_projects = pd.DataFrame(st.session_state.projects)
     df_projects.to_csv('projects.csv', index=False)
-    df_extracurriculars = pd.DataFrame(st.session_state.extracurriculars)
-    df_extracurriculars.to_csv('extracurriculars.csv', index=False)
-    st.success("Data saved successfully to CSV files.")
+    st.success("Data saved to students.csv, courses.csv, and projects.csv")
 
-# Sidebar Navigation
-st.sidebar.title("Navigation")
-selection = st.sidebar.radio("Go to", [
-    "Dashboard", "Add Student", "View Students", "Manage Courses", 
-    "Attendance", "Grades", "Projects", "Extracurriculars"
-])
-
-# Dashboard
-if selection == "Dashboard":
-    st.header("📊 Dashboard Overview")
-    st.write("View the overall statistics of students, courses, attendance, and more.")
-    st.write(f"Total Students: {len(st.session_state.students)}")
-    st.write(f"Total Courses: {len(st.session_state.courses)}")
-    st.write(f"Total Projects: {len(st.session_state.projects)}")
-    st.write(f"Total Extracurriculars: {len(st.session_state.extracurriculars)}")
-
-    # Check Notifications for Upcoming Deadlines
-    check_notifications()
+# Sidebar navigation
+st.sidebar.title("Student Management System")
+selection = st.sidebar.radio("Go to", ["Add Student", "View Students", "Manage Courses", "Attendance", "Grades", "Projects"])
 
 # Add Student Page
 if selection == "Add Student":
-    st.header("Add a New Student")
+    st.title("Add Student")
     with st.form(key='add_student_form'):
         name = st.text_input("Student Name", placeholder="Enter full name")
         age = st.number_input("Age", min_value=1, max_value=100, placeholder="Age")
@@ -159,14 +108,25 @@ if selection == "Add Student":
 
 # View Students Page
 if selection == "View Students":
-    st.header("Students List")
+    st.title("Students List")
     if st.session_state.students:
-        df_students = pd.DataFrame(st.session_state.students)
-        st.dataframe(df_students)
+        df = pd.DataFrame(st.session_state.students)
+        st.dataframe(df)
+
+        # Search functionality
+        search_name = st.text_input("Search by Name")
+        if search_name:
+            df = df[df['Name'].str.contains(search_name, case=False)]
+            st.dataframe(df)
+        else:
+            st.dataframe(df)
 
         # Delete Student
+        st.subheader("Delete Student")
         delete_student_index = st.selectbox("Select a student to delete", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
-        if st.button("Delete Student"):
+        delete_button = st.button("Delete Student")
+        
+        if delete_button:
             delete_student(delete_student_index)
 
         # Save Data Button
@@ -177,11 +137,12 @@ if selection == "View Students":
 
 # Manage Courses Page
 if selection == "Manage Courses":
-    st.header("Manage Courses")
+    st.title("Manage Courses")
     with st.form(key='add_course_form'):
         course_name = st.text_input("Course Name", placeholder="Enter course name")
         credits = st.number_input("Credits", min_value=1, max_value=10, placeholder="Enter course credits")
         instructor = st.text_input("Instructor", placeholder="Enter instructor name")
+        
         add_course_button = st.form_submit_button("Add Course")
         if add_course_button:
             add_course(course_name, credits, instructor)
@@ -192,45 +153,32 @@ if selection == "Manage Courses":
 
 # Attendance Page
 if selection == "Attendance":
-    st.header("Record Attendance")
+    st.title("Record Attendance")
     student_index = st.selectbox("Select Student", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
     course_name = st.selectbox("Select Course", [course["Course Name"] for course in st.session_state.courses])
-    status = st.selectbox("Attendance Status", options=["Present", "Absent", "Late"])
-    if st.button("Mark Attendance"):
-        record_attendance(student_index, course_name, status)
+    
+    record_attendance_button = st.button("Record Attendance")
+    if record_attendance_button:
+        record_attendance(student_index, course_name)
 
 # Grades Page
 if selection == "Grades":
-    st.header("Record Grades")
-    student_index = st.selectbox("Select Student", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
+    st.title("Add Grades")
+    student_index = st.selectbox("Select Student for Grade", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
     course_name = st.selectbox("Select Course", [course["Course Name"] for course in st.session_state.courses])
-    grade = st.selectbox("Grade", options=["A", "B", "C", "D", "F"])
-    if st.button("Add Grade"):
+    grade = st.number_input("Grade", min_value=0, max_value=100, placeholder="Enter grade")
+    
+    add_grade_button = st.button("Add Grade")
+    if add_grade_button:
         add_grade(student_index, course_name, grade)
 
 # Projects Page
 if selection == "Projects":
-    st.header("Manage Student Projects")
-    student_index = st.selectbox("Select Student", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
+    st.title("Add Projects")
+    student_index = st.selectbox("Select Student for Project", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
     project_name = st.text_input("Project Name", placeholder="Enter project name")
-    deadline = st.date_input("Deadline", value=datetime.today() + timedelta(days=7))
-    if st.button("Add Project"):
+    deadline = st.date_input("Deadline", value=datetime.today())
+    
+    add_project_button = st.button("Add Project")
+    if add_project_button:
         add_project(student_index, project_name, deadline)
-
-    st.subheader("Student Projects")
-    projects_df = pd.DataFrame(st.session_state.projects)
-    st.dataframe(projects_df)
-
-# Extracurriculars Page
-if selection == "Extracurriculars":
-    st.header("Manage Extracurricular Activities")
-    student_index = st.selectbox("Select Student", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
-    activity_name = st.text_input("Activity Name", placeholder="Enter activity name")
-    role = st.text_input("Role", placeholder="Enter student's role in activity")
-    activity_date = st.date_input("Date of Activity", value=datetime.today())
-    if st.button("Add Activity"):
-        add_extracurricular(student_index, activity_name, role, activity_date)
-
-    st.subheader("Extracurricular Activities")
-    extracurriculars_df = pd.DataFrame(st.session_state.extracurriculars)
-    st.dataframe(extracurriculars_df)
