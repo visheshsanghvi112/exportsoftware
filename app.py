@@ -1,165 +1,255 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-from datetime import datetime
+import tkinter as tk
+from tkinter import messagebox, ttk
+from pymongo import MongoClient
 
-# Initialize session state for storing student data and courses
-if 'students' not in st.session_state:
-    st.session_state.students = []
-if 'courses' not in st.session_state:
-    st.session_state.courses = []
-if 'attendance' not in st.session_state:
-    st.session_state.attendance = {}
-if 'grades' not in st.session_state:
-    st.session_state.grades = {}
+# Connect to MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client["pyproject"]
+students_collection = db["students"]
+courses_collection = db["courses"]
+grades_collection = db["grades"]
+attendance_collection = db["attendance"]
 
-# Function to add a student
-def add_student(name, age, email, grade):
-    student_data = {
-        "Name": name,
-        "Age": age,
-        "Email": email,
-        "Grade": grade
-    }
-    st.session_state.students.append(student_data)
-    st.success(f"Student {name} added successfully!")
-
-# Function to delete a student
-def delete_student(index):
-    st.session_state.students.pop(index)
-    st.success("Student deleted successfully!")
-
-# Function to add a course
-def add_course(course_name):
-    st.session_state.courses.append(course_name)
-    st.success(f"Course {course_name} added successfully!")
-
-# Function to record attendance
-def record_attendance(student_index):
-    today = datetime.today().date()
-    if today not in st.session_state.attendance:
-        st.session_state.attendance[today] = {}
-    st.session_state.attendance[today][student_index] = True
-    st.success(f"Attendance recorded for {st.session_state.students[student_index]['Name']}.")
-
-# Function to add grades
-def add_grade(student_index, course_name, grade):
-    if student_index not in st.session_state.grades:
-        st.session_state.grades[student_index] = {}
-    st.session_state.grades[student_index][course_name] = grade
-    st.success(f"Grade {grade} added for {st.session_state.students[student_index]['Name']} in {course_name}.")
-
-# Function to save data to CSV
-def save_data():
-    df_students = pd.DataFrame(st.session_state.students)
-    df_students.to_csv('students.csv', index=False)
-    df_courses = pd.DataFrame(st.session_state.courses, columns=["Courses"])
-    df_courses.to_csv('courses.csv', index=False)
-    st.success("Data saved to students.csv and courses.csv")
-
-# Sidebar navigation
-st.sidebar.title("Student Management System")
-selection = st.sidebar.radio("Go to", ["Add Student", "View Students", "Manage Courses", "Attendance", "Grades", "Statistics"])
-
-# Add Student Page
-if selection == "Add Student":
-    st.title("Add Student")
-    with st.form(key='add_student_form'):
-        name = st.text_input("Student Name", placeholder="Enter full name")
-        age = st.number_input("Age", min_value=1, max_value=100, placeholder="Age")
-        email = st.text_input("Email", placeholder="example@example.com")
-        grade = st.selectbox("Grade", options=["A", "B", "C", "D", "F"])
+# Main Application Class
+class StudentManagementApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("PG Student Management System")
+        self.root.geometry("700x600")
+        self.root.config(bg="#34495E")
         
-        submit_button = st.form_submit_button("Add Student")
-        if submit_button:
-            if name and email:
-                add_student(name, age, email, grade)
-            else:
-                st.warning("Please fill all fields!")
+        self.create_widgets()
+    
+    def create_widgets(self):
+        # Create Tabs
+        self.tab_control = ttk.Notebook(self.root)
+        
+        self.student_tab = ttk.Frame(self.tab_control)
+        self.course_tab = ttk.Frame(self.tab_control)
+        self.grade_tab = ttk.Frame(self.tab_control)
+        self.attendance_tab = ttk.Frame(self.tab_control)
 
-# View Students Page
-if selection == "View Students":
-    st.title("Students List")
-    if st.session_state.students:
-        df = pd.DataFrame(st.session_state.students)
-        st.dataframe(df)
+        self.tab_control.add(self.student_tab, text="Students")
+        self.tab_control.add(self.course_tab, text="Courses")
+        self.tab_control.add(self.grade_tab, text="Grades")
+        self.tab_control.add(self.attendance_tab, text="Attendance")
+        self.tab_control.pack(expand=1, fill="both")
 
-        # Search functionality
-        search_name = st.text_input("Search by Name")
-        if search_name:
-            df = df[df['Name'].str.contains(search_name, case=False)]
-            st.dataframe(df)
+        self.create_student_tab()
+        self.create_course_tab()
+        self.create_grade_tab()
+        self.create_attendance_tab()
+
+    def create_student_tab(self):
+        # Student Management Widgets
+        tk.Label(self.student_tab, text="Student Name", bg="#34495E", fg="white").grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.student_name_entry = tk.Entry(self.student_tab, bg="#2C3E50", fg="white")
+        self.student_name_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(self.student_tab, text="Student ID", bg="#34495E", fg="white").grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.student_id_entry = tk.Entry(self.student_tab, bg="#2C3E50", fg="white")
+        self.student_id_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self.student_tab, text="Email", bg="#34495E", fg="white").grid(row=2, column=0, padx=5, pady=5, sticky='e')
+        self.student_email_entry = tk.Entry(self.student_tab, bg="#2C3E50", fg="white")
+        self.student_email_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Button(self.student_tab, text="Add Student", command=self.add_student, bg="#27AE60", fg="black").grid(row=3, column=0, padx=5)
+        tk.Button(self.student_tab, text="View Students", command=self.view_students, bg="#2980B9", fg="black").grid(row=3, column=1, padx=5)
+
+        self.student_tree = ttk.Treeview(self.student_tab, columns=("Name", "ID", "Email"), show="headings")
+        self.student_tree.heading("Name", text="Student Name")
+        self.student_tree.heading("ID", text="Student ID")
+        self.student_tree.heading("Email", text="Email")
+        self.student_tree.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+
+    def create_course_tab(self):
+        # Course Management Widgets
+        tk.Label(self.course_tab, text="Course Name", bg="#34495E", fg="white").grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.course_name_entry = tk.Entry(self.course_tab, bg="#2C3E50", fg="white")
+        self.course_name_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(self.course_tab, text="Course Code", bg="#34495E", fg="white").grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.course_code_entry = tk.Entry(self.course_tab, bg="#2C3E50", fg="white")
+        self.course_code_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self.course_tab, text="Credits", bg="#34495E", fg="white").grid(row=2, column=0, padx=5, pady=5, sticky='e')
+        self.course_credits_entry = tk.Entry(self.course_tab, bg="#2C3E50", fg="white")
+        self.course_credits_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Button(self.course_tab, text="Add Course", command=self.add_course, bg="#27AE60", fg="black").grid(row=3, column=0, padx=5)
+        tk.Button(self.course_tab, text="View Courses", command=self.view_courses, bg="#2980B9", fg="black").grid(row=3, column=1, padx=5)
+
+        self.course_tree = ttk.Treeview(self.course_tab, columns=("Name", "Code", "Credits"), show="headings")
+        self.course_tree.heading("Name", text="Course Name")
+        self.course_tree.heading("Code", text="Course Code")
+        self.course_tree.heading("Credits", text="Credits")
+        self.course_tree.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+
+    def create_grade_tab(self):
+        # Grade Management Widgets
+        tk.Label(self.grade_tab, text="Student ID", bg="#34495E", fg="white").grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.grade_student_id_entry = tk.Entry(self.grade_tab, bg="#2C3E50", fg="white")
+        self.grade_student_id_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(self.grade_tab, text="Grade", bg="#34495E", fg="white").grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.grade_entry = tk.Entry(self.grade_tab, bg="#2C3E50", fg="white")
+        self.grade_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self.grade_tab, text="Semester", bg="#34495E", fg="white").grid(row=2, column=0, padx=5, pady=5, sticky='e')
+        self.semester_entry = tk.Entry(self.grade_tab, bg="#2C3E50", fg="white")
+        self.semester_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Button(self.grade_tab, text="Add Grade", command=self.add_grade, bg="#27AE60", fg="black").grid(row=3, column=0, padx=5)
+        tk.Button(self.grade_tab, text="View Grades", command=self.view_grades, bg="#2980B9", fg="black").grid(row=3, column=1, padx=5)
+
+        self.grade_tree = ttk.Treeview(self.grade_tab, columns=("Student ID", "Grade", "Semester"), show="headings")
+        self.grade_tree.heading("Student ID", text="Student ID")
+        self.grade_tree.heading("Grade", text="Grade")
+        self.grade_tree.heading("Semester", text="Semester")
+        self.grade_tree.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+
+    def create_attendance_tab(self):
+        # Attendance Management Widgets
+        tk.Label(self.attendance_tab, text="Student ID", bg="#34495E", fg="white").grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.attendance_student_id_entry = tk.Entry(self.attendance_tab, bg="#2C3E50", fg="white")
+        self.attendance_student_id_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(self.attendance_tab, text="Attendance Date", bg="#34495E", fg="white").grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.attendance_date_entry = tk.Entry(self.attendance_tab, bg="#2C3E50", fg="white")
+        self.attendance_date_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self.attendance_tab, text="Status", bg="#34495E", fg="white").grid(row=2, column=0, padx=5, pady=5, sticky='e')
+        self.attendance_status_entry = tk.Entry(self.attendance_tab, bg="#2C3E50", fg="white")
+        self.attendance_status_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Button(self.attendance_tab, text="Add Attendance", command=self.add_attendance, bg="#27AE60", fg="black").grid(row=3, column=0, padx=5)
+        tk.Button(self.attendance_tab, text="View Attendance", command=self.view_attendance, bg="#2980B9", fg="black").grid(row=3, column=1, padx=5)
+
+        self.attendance_tree = ttk.Treeview(self.attendance_tab, columns=("Student ID", "Date", "Status"), show="headings")
+        self.attendance_tree.heading("Student ID", text="Student ID")
+        self.attendance_tree.heading("Date", text="Date")
+        self.attendance_tree.heading("Status", text="Status")
+        self.attendance_tree.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+
+    def add_student(self):
+        student_name = self.student_name_entry.get()
+        student_id = self.student_id_entry.get()
+        student_email = self.student_email_entry.get()
+
+        if student_name and student_id and student_email:
+            student_data = {
+                "name": student_name,
+                "student_id": student_id,
+                "email": student_email
+            }
+            students_collection.insert_one(student_data)
+            messagebox.showinfo("Success", "Student added successfully!")
+            self.clear_student_entries()
+            self.view_students()
         else:
-            st.dataframe(df)
+            messagebox.showwarning("Input Error", "Please fill in all fields.")
 
-        # Delete Student
-        st.subheader("Delete Student")
-        delete_student_index = st.selectbox("Select a student to delete", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
-        delete_button = st.button("Delete Student")
-        
-        if delete_button:
-            delete_student(delete_student_index)
+    def view_students(self):
+        for row in self.student_tree.get_children():
+            self.student_tree.delete(row)
+        for student in students_collection.find():
+            self.student_tree.insert("", "end", values=(student["name"], student["student_id"], student["email"]))
 
-        # Save Data Button
-        if st.button("Save Data to CSV"):
-            save_data()
-    else:
-        st.write("No students added yet.")
+    def add_course(self):
+        course_name = self.course_name_entry.get()
+        course_code = self.course_code_entry.get()
+        course_credits = self.course_credits_entry.get()
 
-# Manage Courses Page
-if selection == "Manage Courses":
-    st.title("Manage Courses")
-    with st.form(key='add_course_form'):
-        course_name = st.text_input("Course Name", placeholder="Enter course name")
-        add_course_button = st.form_submit_button("Add Course")
-        if add_course_button:
-            add_course(course_name)
+        if course_name and course_code and course_credits:
+            course_data = {
+                "name": course_name,
+                "code": course_code,
+                "credits": course_credits
+            }
+            courses_collection.insert_one(course_data)
+            messagebox.showinfo("Success", "Course added successfully!")
+            self.clear_course_entries()
+            self.view_courses()
+        else:
+            messagebox.showwarning("Input Error", "Please fill in all fields.")
 
-    st.subheader("Available Courses")
-    st.write(st.session_state.courses)
+    def view_courses(self):
+        for row in self.course_tree.get_children():
+            self.course_tree.delete(row)
+        for course in courses_collection.find():
+            self.course_tree.insert("", "end", values=(course["name"], course["code"], course["credits"]))
 
-# Attendance Page
-if selection == "Attendance":
-    st.title("Record Attendance")
-    if st.session_state.students:
-        st.subheader("Today's Date: " + str(datetime.today().date()))
-        for i, student in enumerate(st.session_state.students):
-            if st.checkbox(f"Present: {student['Name']}", key=i):
-                record_attendance(i)
+    def add_grade(self):
+        student_id = self.grade_student_id_entry.get()
+        grade = self.grade_entry.get()
+        semester = self.semester_entry.get()
 
-# Grades Page
-if selection == "Grades":
-    st.title("Add Grades")
-    if st.session_state.students:
-        student_index = st.selectbox("Select a Student", range(len(st.session_state.students)), format_func=lambda x: st.session_state.students[x]["Name"])
-        course_name = st.selectbox("Select Course", st.session_state.courses)
-        grade = st.text_input("Enter Grade", placeholder="A, B, C, etc.")
+        if student_id and grade and semester:
+            grade_data = {
+                "student_id": student_id,
+                "grade": grade,
+                "semester": semester
+            }
+            grades_collection.insert_one(grade_data)
+            messagebox.showinfo("Success", "Grade added successfully!")
+            self.clear_grade_entries()
+            self.view_grades()
+        else:
+            messagebox.showwarning("Input Error", "Please fill in all fields.")
 
-        if st.button("Add Grade"):
-            if grade:
-                add_grade(student_index, course_name, grade)
-            else:
-                st.warning("Please enter a grade.")
+    def view_grades(self):
+        for row in self.grade_tree.get_children():
+            self.grade_tree.delete(row)
+        for grade in grades_collection.find():
+            self.grade_tree.insert("", "end", values=(grade["student_id"], grade["grade"], grade["semester"]))
 
-        st.subheader("Grades Overview")
-        grades_df = pd.DataFrame(st.session_state.grades).T
-        st.dataframe(grades_df)
+    def add_attendance(self):
+        student_id = self.attendance_student_id_entry.get()
+        attendance_date = self.attendance_date_entry.get()
+        status = self.attendance_status_entry.get()
 
-# Statistics Page
-if selection == "Statistics":
-    st.title("Statistics")
-    if st.session_state.students:
-        df = pd.DataFrame(st.session_state.students)
+        if student_id and attendance_date and status:
+            attendance_data = {
+                "student_id": student_id,
+                "date": attendance_date,
+                "status": status
+            }
+            attendance_collection.insert_one(attendance_data)
+            messagebox.showinfo("Success", "Attendance added successfully!")
+            self.clear_attendance_entries()
+            self.view_attendance()
+        else:
+            messagebox.showwarning("Input Error", "Please fill in all fields.")
 
-        # Display age distribution
-        st.subheader("Age Distribution")
-        st.bar_chart(df['Age'].value_counts())
+    def view_attendance(self):
+        for row in self.attendance_tree.get_children():
+            self.attendance_tree.delete(row)
+        for attendance in attendance_collection.find():
+            self.attendance_tree.insert("", "end", values=(attendance["student_id"], attendance["date"], attendance["status"]))
 
-        # Display grade distribution
-        st.subheader("Grade Distribution")
-        st.bar_chart(df['Grade'].value_counts())
+    def clear_student_entries(self):
+        self.student_name_entry.delete(0, tk.END)
+        self.student_id_entry.delete(0, tk.END)
+        self.student_email_entry.delete(0, tk.END)
 
-        # Display total number of students
-        st.write(f"Total number of students: {len(df)}")
-    else:
-        st.write("No student data available for statistics.")
+    def clear_course_entries(self):
+        self.course_name_entry.delete(0, tk.END)
+        self.course_code_entry.delete(0, tk.END)
+        self.course_credits_entry.delete(0, tk.END)
+
+    def clear_grade_entries(self):
+        self.grade_student_id_entry.delete(0, tk.END)
+        self.grade_entry.delete(0, tk.END)
+        self.semester_entry.delete(0, tk.END)
+
+    def clear_attendance_entries(self):
+        self.attendance_student_id_entry.delete(0, tk.END)
+        self.attendance_date_entry.delete(0, tk.END)
+        self.attendance_status_entry.delete(0, tk.END)
+
+# Run the Application
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = StudentManagementApp(root)
+    root.mainloop()
